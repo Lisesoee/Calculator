@@ -6,14 +6,11 @@ services:
     build:
       context: .
       dockerfile: AddOperatorService/Dockerfile
+    deploy:
+      mode: replicated
+      replicas: 3
 
   calculatorwebui:
-    # environment:
-    #   - ASPNETCORE_ENVIRONMENT=Development
-    #   - ASPNETCORE_URLS=https://+:443;http://+:80
-    # ports:
-    #   - "80"
-    #   - "443"
     image: ${DOCKER_REGISTRY-}calculatorwebui
     ports:
       - "8080:8080"
@@ -22,11 +19,14 @@ services:
       dockerfile: Calculator/Dockerfile
     depends_on:
       - addoperatorservice
-      # - subtractoperatorservice
+      - subtractoperatorservice
 
   subtractoperatorservice:
     image: ${DOCKER_REGISTRY-}subtractoperatorservice
     build:
       context: .
       dockerfile: SubtractOperatorService/Dockerfile
+    deploy:
+      mode: replicated
+      replicas: 3
 
