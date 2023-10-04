@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  addoperatorservice:
+    image: ${DOCKER_REGISTRY-}addoperatorservice
+    build:
+      context: .
+      dockerfile: AddOperatorService/Dockerfile
+
+  calculatorwebui:
+    # environment:
+    #   - ASPNETCORE_ENVIRONMENT=Development
+    #   - ASPNETCORE_URLS=https://+:443;http://+:80
+    # ports:
+    #   - "80"
+    #   - "443"
+    image: ${DOCKER_REGISTRY-}calculatorwebui
+    ports:
+      - "8080:8080"
+    build:
+      context: .
+      dockerfile: Calculator/Dockerfile
+    depends_on:
+      - addoperatorservice
+      # - subtractoperatorservice
+
+  subtractoperatorservice:
+    image: ${DOCKER_REGISTRY-}subtractoperatorservice
+    build:
+      context: .
+      dockerfile: SubtractOperatorService/Dockerfile
+
