@@ -9,7 +9,10 @@ namespace SubtractOperatorService.Controllers
         [HttpGet]
         public int Get(int a, int b)
         {
-            return a - b;
+            var result = a - b;
+            Console.WriteLine(a + " - " + b + " = " + result);
+
+            return result;
         }
     }
 }
