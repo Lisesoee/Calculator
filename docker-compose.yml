@@ -6,6 +6,8 @@ services:
     build:
       context: .
       dockerfile: AddOperatorService/Dockerfile
+    depends_on:
+      - addOperations-db
     deploy:
       mode: replicated
       replicas: 3
@@ -26,7 +28,25 @@ services:
     build:
       context: .
       dockerfile: SubtractOperatorService/Dockerfile
+    depends_on:
+      - subtractOperations-db
     deploy:
       mode: replicated
       replicas: 3
+
+  addOperations-db:
+    image: "mysql"
+    environment:
+      MYSQL_DATABASE: "addOperations-database"
+      MYSQL_USER: "guest"
+      MYSQL_PASSWORD: "1234"
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+
+  subtractOperations-db:
+    image: "mysql"
+    environment:
+      MYSQL_DATABASE: "subtractOperations-database"
+      MYSQL_USER: "guest"
+      MYSQL_PASSWORD: "1234"
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
 
