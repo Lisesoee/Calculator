@@ -1,0 +1,44 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+@* <div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div> *@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculator</title>
+</head>
+<body>
+    <h1>Calculator</h1>
+    <input type="text" id="num1" placeholder="Enter number 1">
+    <input type="text" id="num2" placeholder="Enter number 2">
+    <br>
+    <button onclick="add()">Add</button>
+    <button onclick="subtract()">Subtract</button>
+    <br>
+    <p>Result: <span id="result">0</span></p>
+
+    <script>
+        function add() {
+            var num1 = parseFloat(document.getElementById("num1").value);
+            var num2 = parseFloat(document.getElementById("num2").value);
+            var result = num1 + num2;
+            document.getElementById("result").textContent = result;
+        }
+
+        function subtract() {
+            var num1 = parseFloat(document.getElementById("num1").value);
+            var num2 = parseFloat(document.getElementById("num2").value);
+            var result = num1 - num2;
+            document.getElementById("result").textContent = result;
+        }
+    </script>
+</body>
+</html>
+
