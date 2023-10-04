@@ -22,4 +22,11 @@ services:
       dockerfile: Calculator/Dockerfile
     depends_on:
       - addoperatorservice
+      # - subtractoperatorservice
+
+  subtractoperatorservice:
+    image: ${DOCKER_REGISTRY-}subtractoperatorservice
+    build:
+      context: .
+      dockerfile: SubtractOperatorService/Dockerfile
 

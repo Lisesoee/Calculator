@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AddOperatorService", "AddOp
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{1409F5CE-5595-4F78-ADE1-6987533EC382}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubtractOperatorService", "SubtractOperatorService\SubtractOperatorService.csproj", "{D1AE7ED1-5831-4349-9D1A-97B127B91289}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{1409F5CE-5595-4F78-ADE1-6987533EC382}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1409F5CE-5595-4F78-ADE1-6987533EC382}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1409F5CE-5595-4F78-ADE1-6987533EC382}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1AE7ED1-5831-4349-9D1A-97B127B91289}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1AE7ED1-5831-4349-9D1A-97B127B91289}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1AE7ED1-5831-4349-9D1A-97B127B91289}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1AE7ED1-5831-4349-9D1A-97B127B91289}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
