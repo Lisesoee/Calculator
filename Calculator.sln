@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calculator", "Calculator\Calculator.csproj", "{E693287D-F273-415A-BE75-0D90C7B0F428}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculatorWebUI", "Calculator\CalculatorWebUI.csproj", "{E693287D-F273-415A-BE75-0D90C7B0F428}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AddOperatorService", "AddOperatorService\AddOperatorService.csproj", "{B4A46482-768F-416A-8910-4C306AFEC6B7}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{1409F5CE-5595-4F78-ADE1-6987533EC382}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubtractOperatorService", "SubtractOperatorService\SubtractOperatorService.csproj", "{D1AE7ED1-5831-4349-9D1A-97B127B91289}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{E693287D-F273-415A-BE75-0D90C7B0F428}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E693287D-F273-415A-BE75-0D90C7B0F428}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E693287D-F273-415A-BE75-0D90C7B0F428}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4A46482-768F-416A-8910-4C306AFEC6B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4A46482-768F-416A-8910-4C306AFEC6B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4A46482-768F-416A-8910-4C306AFEC6B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4A46482-768F-416A-8910-4C306AFEC6B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1409F5CE-5595-4F78-ADE1-6987533EC382}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1409F5CE-5595-4F78-ADE1-6987533EC382}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1409F5CE-5595-4F78-ADE1-6987533EC382}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1409F5CE-5595-4F78-ADE1-6987533EC382}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1AE7ED1-5831-4349-9D1A-97B127B91289}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1AE7ED1-5831-4349-9D1A-97B127B91289}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1AE7ED1-5831-4349-9D1A-97B127B91289}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1AE7ED1-5831-4349-9D1A-97B127B91289}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

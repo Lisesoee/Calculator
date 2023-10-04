@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Calculator/CalculatorWebUI.csproj", "Calculator/"]
-RUN dotnet restore "Calculator/CalculatorWebUI.csproj"
+COPY ["AddOperatorService/AddOperatorService.csproj", "AddOperatorService/"]
+RUN dotnet restore "AddOperatorService/AddOperatorService.csproj"
 COPY . .
-WORKDIR "/src/Calculator"
-RUN dotnet build "CalculatorWebUI.csproj" -c Release -o /app/build
+WORKDIR "/src/AddOperatorService"
+RUN dotnet build "AddOperatorService.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "CalculatorWebUI.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "AddOperatorService.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "CalculatorWebUI.dll"]
+ENTRYPOINT ["dotnet", "AddOperatorService.dll"]
