@@ -40,14 +40,15 @@
                         @Html.DisplayNameFor(m => m.ListOfOperations[0].a)
                     </th>
                     <th>
+                        @Html.DisplayNameFor(m => m.ListOfOperations[0].MathematicOperator)
+                    </th>
+                    <th>
                         @Html.DisplayNameFor(m => m.ListOfOperations[0].b)
                     </th>
                     <th>
                         @Html.DisplayNameFor(m => m.ListOfOperations[0].result)
                     </th>
-                    <th>
-
-                    </th>
+                    
                 </tr>
                 @foreach (var item in Model.ListOfOperations)
                 {
@@ -56,12 +57,13 @@
                             @Html.DisplayFor(m => item.a)
                         </td>
                         <td>
+                            @Html.DisplayFor(m => item.MathematicOperator)
+                        </td>
+                        <td>
                             @Html.DisplayFor(m => item.b)
                         </td>
                         <td>
                             @Html.DisplayFor(m => item.result)
-                        </td>
-                        <td>
                         </td>
                     </tr>
                 }
