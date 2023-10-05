@@ -52,6 +52,12 @@
     </form>
     <br>
     <p>Result: <span>@Model.Result</span></p>
+    <br>
+    <form method="post" asp-page-handler="ListOfOperations">
+        <button type="submit">ListOfOperations</button>
+    </form>
+    <p>Result: <span>@Model.ListOfOperations</span></p>
+
 
 </body>
 </html>

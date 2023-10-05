@@ -1,12 +1,10 @@
-﻿using RestSharp;
+﻿using Calculator.Models;
+using RestSharp;
 
 namespace Calculator.Services
 {
     public class CalculatorService
     {
-        //private static RestClient AddOperatorRestClient = new RestClient("http://AddOperatorService/");
-        //private static RestClient SubtractOperatorRestClient = new RestClient("http://SubtractOperatorService/");
-
         public double Add(double num1, double num2)
         {
             var client = new HttpClient();
@@ -21,7 +19,6 @@ namespace Calculator.Services
             Console.WriteLine(response.StatusCode + " from " + client.BaseAddress + " result: " + stringTask.Result);
 
             return double.Parse(stringTask.Result);
-            //return num1 + num2;
         }
 
         public double Subtract(double num1, double num2)
@@ -38,7 +35,37 @@ namespace Calculator.Services
             Console.WriteLine(response.StatusCode + " from " + client.BaseAddress + " result: " + stringTask.Result);
 
             return double.Parse(stringTask.Result);
-            //return num1 - num2;
+        }
+
+        public List<MathematicalOpearation> GetListOfItems()
+        //public async Task<List<string>> GetListOfItems()
+        {
+            Console.WriteLine("Fetching list...");
+            var operationList = new List<MathematicalOpearation>();
+
+            var newOperation = new MathematicalOpearation
+            {
+                Id = 1,
+                a = 10,
+                b = 5,
+                result = 15,
+                MathematicOperator = "+"
+            };
+            operationList.Add(newOperation);
+
+            var newOperation2 = new MathematicalOpearation
+            {
+                Id = 2,
+                a = 8,
+                b = 2,
+                result = 6,
+                MathematicOperator = "-"
+            };
+            operationList.Add(newOperation2);
+
+            // Fetch the list of items from a data source or perform any required operations
+            // For demonstration purposes, we'll return a static list here
+            return operationList;
         }
     }
 }
