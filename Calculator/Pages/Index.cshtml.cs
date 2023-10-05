@@ -8,7 +8,15 @@ namespace Calculator.Pages
     public class IndexModel : PageModel
     {       
         public double Result { get; set; }
+        [BindProperty]
         public List<MathematicalOpearation> ListOfOperations { get; set; }
+        public async Task<IActionResult> OnGet()
+        {
+            var myCalculator = new CalculatorService();
+            ListOfOperations = myCalculator.GetListOfItems();
+
+            return Page();
+        }
 
         public void OnPostAdd(double num1, double num2)
         {
