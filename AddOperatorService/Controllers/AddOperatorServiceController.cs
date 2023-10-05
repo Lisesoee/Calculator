@@ -22,7 +22,7 @@ namespace AddOperatorService.Controllers
             var tables = addOperationsdb.Query<string>("SHOW TABLES LIKE 'addOperations'");
             if (!tables.Any())
             {
-                addOperationsdb.Execute("CREATE TABLE addOperations (id INT AUTO_INCREMENT PRIMARY KEY, a INT NOT NULL, b INT NOT NULL, result INT NOT NULL)");
+                addOperationsdb.Execute("CREATE TABLE addOperations (id INT AUTO_INCREMENT PRIMARY KEY, a INT NOT NULL, b INT NOT NULL, result INT NOT NULL, MathematicalOperator ENUM('+', '-') NOT NULL)");
                 Console.WriteLine("Table created");
             }
 
@@ -38,30 +38,38 @@ namespace AddOperatorService.Controllers
         {
             Console.WriteLine("Getting all add operations...");
 
-            var operationList = new List<MathematicalOpearation>();
+            addOperationsdb.Open();
 
-            var newOperation = new MathematicalOpearation
+            var tables = addOperationsdb.Query<string>("SHOW TABLES LIKE 'addOperations'");
+            if (!tables.Any())
             {
-                Id = 3,
-                a = 23,
-                b = 7,
-                result = 30,
-                MathematicOperator = "+"
-            };
-            operationList.Add(newOperation);
+                addOperationsdb.Execute("CREATE TABLE addOperations (id INT AUTO_INCREMENT PRIMARY KEY, a INT NOT NULL, b INT NOT NULL, result INT NOT NULL, MathematicalOperator ENUM('+', '-') NOT NULL)");
+                Console.WriteLine("Table created");
+            }
 
-            var newOperation2 = new MathematicalOpearation
+            List<MathematicalOpearation> operationList = new List<MathematicalOpearation>();
+
+            MySqlCommand cmd = addOperationsdb.CreateCommand() as MySqlCommand;
+            cmd.CommandText = "SELECT * FROM addOperations";
+            MySqlDataReader reader = cmd.ExecuteReader() as MySqlDataReader;
+            while (reader.Read())
             {
-                Id = 4,
-                a = 15,
-                b = 5,
-                result = 20,
-                MathematicOperator = "+"
-            };
-            operationList.Add(newOperation2);
+                Console.WriteLine("Read something... ");
+
+                int id = reader.GetInt32(0);
+                int a = reader.GetInt32(1);
+                int b = reader.GetInt32(2);
+                int result = reader.GetInt32(3);
+                string? mathematicOperator = reader.GetString(4);
+
+                MathematicalOpearation newOperation = new MathematicalOpearation(id, a, b, result, mathematicOperator);
+                operationList.Add(newOperation);
+            }
+
+            Console.WriteLine("Finished loading list.");
+            addOperationsdb.Close();
 
             return operationList;
-
         }
     }
 }
