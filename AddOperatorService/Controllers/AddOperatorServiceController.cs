@@ -60,7 +60,7 @@ namespace AddOperatorService.Controllers
                 int a = reader.GetInt32(1);
                 int b = reader.GetInt32(2);
                 int result = reader.GetInt32(3);
-                string? mathematicOperator = reader.GetString(4);
+                string mathematicOperator = "+";// reader.GetString(4);
 
                 MathematicalOpearation newOperation = new MathematicalOpearation(id, a, b, result, mathematicOperator);
                 operationList.Add(newOperation);

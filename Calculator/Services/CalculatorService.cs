@@ -59,10 +59,12 @@ namespace Calculator.Services
 
                 // Deserialize the JSON response into a list of MathematicalOperation objects
                 var operationsList = JsonSerializer.Deserialize<List<MathematicalOpearation>>(responseContent);
+                foreach (var operation in operationsList)
+                {
+                    operation.MathematicOperator = "+";
+                }
 
-
-                Console.WriteLine("Retried number of operations: " + operationsList.Count);
-                // Now you have the list of objects in the operationsList variable
+                Console.WriteLine("Retrieved number of operations: " + operationsList.Count);
 
                 return operationsList;
             }
