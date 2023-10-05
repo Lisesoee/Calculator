@@ -13,7 +13,7 @@ namespace Calculator.Pages
         public async Task<IActionResult> OnGet()
         {
             var myCalculator = new CalculatorService();
-            ListOfOperations = myCalculator.GetListOfItems();
+            ListOfOperations = await myCalculator.GetListOfItemsAsync();
 
             return Page();
         }
@@ -29,10 +29,12 @@ namespace Calculator.Pages
             Result = myCalculator.Subtract(num1, num2);
         }
 
-        public void OnPostListOfOperations()
+        public async Task<IActionResult> OnPostListOfOperations()
         {
             var myCalculator = new CalculatorService();
-            ListOfOperations = myCalculator.GetListOfItems();
+            ListOfOperations = await myCalculator.GetListOfItemsAsync();
+
+            return Page();
         }
     }
 }

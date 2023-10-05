@@ -1,5 +1,7 @@
 ﻿using Calculator.Models;
 using RestSharp;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace Calculator.Services
 {
@@ -37,49 +39,40 @@ namespace Calculator.Services
             return double.Parse(stringTask.Result);
         }
 
-        public List<MathematicalOpearation> GetListOfItems()
+        public async Task<List<MathematicalOpearation>> GetListOfItemsAsync()
         //public async Task<List<string>> GetListOfItems()
         {
             Console.WriteLine("Fetching list...");
 
-            var operationList = new List<MathematicalOpearation>();
-
-            var newOperation = new MathematicalOpearation
-            {
-                Id = 1,
-                a = 10,
-                b = 5,
-                result = 15,
-                MathematicOperator = "+"
-            };
-            operationList.Add(newOperation);
-
-            var newOperation2 = new MathematicalOpearation
-            {
-                Id = 2,
-                a = 8,
-                b = 2,
-                result = 6,
-                MathematicOperator = "-"
-            };
-            operationList.Add(newOperation2);
-
-
-            var client = new HttpClient();
+            // Create an HttpClient instance
+            using var client = new HttpClient();
             client.BaseAddress = new Uri("http://addoperatorservice/AddOperatorService/GetAllOperations");
 
-            Console.WriteLine(client.BaseAddress);
+            // Send an HTTP GET request
+            using var response = await client.GetAsync("");
 
-            var response = client.Send(new HttpRequestMessage(HttpMethod.Get, ""));
-            var stringTask = response.Content.ReadAsStringAsync();
-            stringTask.Wait();
+            // Check if the request was successful
+            if (response.IsSuccessStatusCode)
+            {
+                // Read the response content as a string
+                var responseContent = await response.Content.ReadAsStringAsync();
 
-            Console.WriteLine(response.StatusCode + " from " + client.BaseAddress + " result: " + stringTask.Result);
+                // Deserialize the JSON response into a list of MathematicalOperation objects
+                var operationsList = JsonSerializer.Deserialize<List<MathematicalOpearation>>(responseContent);
 
-            // TODO: acutally get the list from the result instead of using the hardcoded list
-            //return double.Parse(stringTask.Result);
 
-            return operationList;
+                Console.WriteLine("Retried number of operations: " + operationsList.Count);
+                // Now you have the list of objects in the operationsList variable
+
+                return operationsList;
+            }
+            else
+            {
+                Console.WriteLine($"Error: {response.StatusCode}");
+                var operationList = new List<MathematicalOpearation>();
+                return operationList;
+            }
+
         }
     }
 }
