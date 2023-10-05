@@ -6,12 +6,13 @@ using System.Data;
 namespace AddOperatorService.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     public class AddOperatorServiceController : ControllerBase
     {
         private static IDbConnection addOperationsdb = new MySqlConnection("Server=addOperations-db;Database=addOperations-database;Uid=guest;Pwd=1234;");
 
         [HttpGet]
+        [ActionName("GetResult")]
         public int Get(int a, int b)
         {
             int result = a + b;
@@ -30,6 +31,37 @@ namespace AddOperatorService.Controllers
             addOperationsdb.Close();           
 
             return result;
+        }
+        [HttpGet]
+        [ActionName("GetAllOperations")]
+        public List<MathematicalOpearation> Get()
+        {
+            Console.WriteLine("Getting all add operations...");
+
+            var operationList = new List<MathematicalOpearation>();
+
+            var newOperation = new MathematicalOpearation
+            {
+                Id = 3,
+                a = 23,
+                b = 7,
+                result = 30,
+                MathematicOperator = "+"
+            };
+            operationList.Add(newOperation);
+
+            var newOperation2 = new MathematicalOpearation
+            {
+                Id = 4,
+                a = 15,
+                b = 5,
+                result = 20,
+                MathematicOperator = "+"
+            };
+            operationList.Add(newOperation2);
+
+            return operationList;
+
         }
     }
 }

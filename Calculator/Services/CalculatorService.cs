@@ -8,7 +8,7 @@ namespace Calculator.Services
         public double Add(double num1, double num2)
         {
             var client = new HttpClient();
-            client.BaseAddress = new Uri("http://addoperatorservice/AddOperatorService?a=" + num1 + "&b=" + num2);
+            client.BaseAddress = new Uri("http://addoperatorservice/AddOperatorService/GetResult?a=" + num1 + "&b=" + num2);
 
             Console.WriteLine(client.BaseAddress);
 
@@ -41,6 +41,7 @@ namespace Calculator.Services
         //public async Task<List<string>> GetListOfItems()
         {
             Console.WriteLine("Fetching list...");
+
             var operationList = new List<MathematicalOpearation>();
 
             var newOperation = new MathematicalOpearation
@@ -63,8 +64,21 @@ namespace Calculator.Services
             };
             operationList.Add(newOperation2);
 
-            // Fetch the list of items from a data source or perform any required operations
-            // For demonstration purposes, we'll return a static list here
+
+            var client = new HttpClient();
+            client.BaseAddress = new Uri("http://addoperatorservice/AddOperatorService/GetAllOperations");
+
+            Console.WriteLine(client.BaseAddress);
+
+            var response = client.Send(new HttpRequestMessage(HttpMethod.Get, ""));
+            var stringTask = response.Content.ReadAsStringAsync();
+            stringTask.Wait();
+
+            Console.WriteLine(response.StatusCode + " from " + client.BaseAddress + " result: " + stringTask.Result);
+
+            // TODO: acutally get the list from the result instead of using the hardcoded list
+            //return double.Parse(stringTask.Result);
+
             return operationList;
         }
     }
