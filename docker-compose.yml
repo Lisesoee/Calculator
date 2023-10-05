@@ -6,14 +6,13 @@ services:
     build:
       context: .
       dockerfile: AddOperatorService/Dockerfile
+    depends_on:
+      - addOperations-db
+    deploy:
+      mode: replicated
+      replicas: 3
 
   calculatorwebui:
-    # environment:
-    #   - ASPNETCORE_ENVIRONMENT=Development
-    #   - ASPNETCORE_URLS=https://+:443;http://+:80
-    # ports:
-    #   - "80"
-    #   - "443"
     image: ${DOCKER_REGISTRY-}calculatorwebui
     ports:
       - "8080:8080"
@@ -22,11 +21,32 @@ services:
       dockerfile: Calculator/Dockerfile
     depends_on:
       - addoperatorservice
-      # - subtractoperatorservice
+      - subtractoperatorservice
 
   subtractoperatorservice:
     image: ${DOCKER_REGISTRY-}subtractoperatorservice
     build:
       context: .
       dockerfile: SubtractOperatorService/Dockerfile
+    depends_on:
+      - subtractOperations-db
+    deploy:
+      mode: replicated
+      replicas: 3
+
+  addOperations-db:
+    image: "mysql"
+    environment:
+      MYSQL_DATABASE: "addOperations-database"
+      MYSQL_USER: "guest"
+      MYSQL_PASSWORD: "1234"
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+
+  subtractOperations-db:
+    image: "mysql"
+    environment:
+      MYSQL_DATABASE: "subtractOperations-database"
+      MYSQL_USER: "guest"
+      MYSQL_PASSWORD: "1234"
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
 

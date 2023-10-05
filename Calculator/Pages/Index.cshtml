@@ -4,11 +4,6 @@
     ViewData["Title"] = "Home page";
 }
 
-@* <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div> *@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,29 +11,6 @@
 </head>
 <body>
     <h1>Calculator</h1>
-    @* <input type="text" id="num1" placeholder="Enter number 1">
-    <input type="text" id="num2" placeholder="Enter number 2">
-    <br>
-    <button onclick="add()">Add</button>
-    <button onclick="subtract()">Subtract</button>
-    <br>
-    <p>Result: <span id="result">0</span></p>
-
-    <script>
-        function add() {
-            var num1 = parseFloat(document.getElementById("num1").value);
-            var num2 = parseFloat(document.getElementById("num2").value);
-            var result = num1 + num2;
-            document.getElementById("result").textContent = result;
-        }
-
-        function subtract() {
-            var num1 = parseFloat(document.getElementById("num1").value);
-            var num2 = parseFloat(document.getElementById("num2").value);
-            var result = num1 - num2;
-            document.getElementById("result").textContent = result;
-        }
-    </script> *@
 
     <form method="post" asp-page-handler="Add">
         <input type="text" id="num1" name="num1" placeholder="Enter number 1">
@@ -52,6 +24,52 @@
     </form>
     <br>
     <p>Result: <span>@Model.Result</span></p>
+
+    <br>
+
+    <form method="post" asp-page-handler="ListOfOperations">
+        <button type="submit">Update List</button>
+    </form>
+    
+    <div class="border bg-white">
+        <br />
+        <div>
+            <table class="table table-striped border">
+                <tr class="table-secondary">
+                    <th>
+                        @Html.DisplayNameFor(m => m.ListOfOperations[0].a)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(m => m.ListOfOperations[0].MathematicOperator)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(m => m.ListOfOperations[0].b)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(m => m.ListOfOperations[0].result)
+                    </th>
+                    
+                </tr>
+                @foreach (var item in Model.ListOfOperations)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(m => item.a)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.MathematicOperator)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.b)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.result)
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
 
 </body>
 </html>
