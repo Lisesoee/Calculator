@@ -15,6 +15,9 @@ namespace AddOperatorService.Controllers
         [ActionName("GetResult")]
         public int Get(int a, int b)
         {
+            using var activity = MonitorService.ActivitySource.StartActivity();
+            MonitorService.Log.Debug("Started Get for AddOperatorService a={a} b={b}", a, b);
+
             int result = a + b;
             Console.WriteLine(a + " + " + b + " = " + result);
 
