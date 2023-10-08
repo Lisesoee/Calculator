@@ -9,12 +9,11 @@ namespace Calculator.Services
 
     public class CalculatorService
     {
-        
-        //public double Add(double num1, double num2)
+        private static RestClient addOperationRestClient = new RestClient("http://addoperatorservice/AddOperatorService/");
+        private static RestClient subtractOperationRestClient = new RestClient("http://subtractoperatorservice/SubtractOperatorService/");
         public async Task<double> Add(double num1, double num2)
         {
-            RestClient restClient = new RestClient("http://addoperatorservice/AddOperatorService/");
-            var task = restClient.GetAsync<int>(new RestRequest("/GetResult?a=" + num1 + "&b=" + num2));
+            var task = addOperationRestClient.GetAsync<int>(new RestRequest("/GetResult?a=" + num1 + "&b=" + num2));
 
             Console.WriteLine("Retrived result from Add operation: " + task.Result);
             return task.Result;
@@ -22,8 +21,7 @@ namespace Calculator.Services
 
         public async Task<double> Subtract(double num1, double num2)
         {
-            RestClient restClient = new RestClient("http://subtractoperatorservice/SubtractOperatorService/");
-            var task = restClient.GetAsync<int>(new RestRequest("/GetResult?a=" + num1 + "&b=" + num2));
+            var task = subtractOperationRestClient.GetAsync<int>(new RestRequest("/GetResult?a=" + num1 + "&b=" + num2));
 
             Console.WriteLine("Retrived result from Subtract operation: " + task.Result);
             return task.Result;
@@ -41,78 +39,26 @@ namespace Calculator.Services
             operationList.AddRange(subtractOperationList);  
 
             return operationList;
-
         }
+
         private async Task<List<MathematicalOpearation>> GetListOfAddOperations()
         {
-            Console.WriteLine("Fetching list...");
+            Console.WriteLine("Fetching list of add operations...");
 
-            // Create an HttpClient instance
-            using var client = new HttpClient();
-            client.BaseAddress = new Uri("http://addoperatorservice/AddOperatorService/GetAllOperations");
+            var task = addOperationRestClient.GetAsync<List<MathematicalOpearation>>(new RestRequest("/GetAllOperations"));
 
-            // Send an HTTP GET request
-            using var response = await client.GetAsync("");
-
-            // Check if the request was successful
-            if (response.IsSuccessStatusCode)
-            {
-                // Read the response content as a string
-                var responseContent = await response.Content.ReadAsStringAsync();
-
-                // Deserialize the JSON response into a list of MathematicalOperation objects
-                var operationsList = JsonSerializer.Deserialize<List<MathematicalOpearation>>(responseContent);
-                foreach (var operation in operationsList)
-                {
-                    operation.MathematicOperator = "+";
-                }
-
-                Console.WriteLine("Retrieved number of add operations: " + operationsList.Count);
-
-                return operationsList;
-            }
-            else
-            {
-                Console.WriteLine($"Error: {response.StatusCode}");
-                var operationList = new List<MathematicalOpearation>();
-                return operationList;
-            }
+            Console.WriteLine("Retrieved number of add operations: " + task.Result.Count);
+            return task.Result;
         }
 
         private async Task<List<MathematicalOpearation>> GetListOfSubtractOperations()
         {
-            Console.WriteLine("Fetching list...");
+            Console.WriteLine("Fetching list of subtract operations...");
 
-            // Create an HttpClient instance
-            using var client = new HttpClient();
-            client.BaseAddress = new Uri("http://subtractoperatorservice/SubtractOperatorService/GetAllOperations");
+            var task = subtractOperationRestClient.GetAsync<List<MathematicalOpearation>>(new RestRequest("/GetAllOperations"));
 
-            // Send an HTTP GET request
-            using var response = await client.GetAsync("");
-
-            // Check if the request was successful
-            if (response.IsSuccessStatusCode)
-            {
-                // Read the response content as a string
-                var responseContent = await response.Content.ReadAsStringAsync();
-
-                // Deserialize the JSON response into a list of MathematicalOperation objects
-                var operationsList = JsonSerializer.Deserialize<List<MathematicalOpearation>>(responseContent);
-                foreach (var operation in operationsList)
-                {
-                    operation.MathematicOperator = "-";
-                }
-
-                Console.WriteLine("Retrieved number of subtract operations: " + operationsList.Count);
-
-                return operationsList;
-            }
-            else
-            {
-                Console.WriteLine($"Error: {response.StatusCode}");
-                var operationList = new List<MathematicalOpearation>();
-                return operationList;
-            }
+            Console.WriteLine("Retrieved number of subtract operations: " + task.Result.Count);
+            return task.Result;
         }
     }
 }
