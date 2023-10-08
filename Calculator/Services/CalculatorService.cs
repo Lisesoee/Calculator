@@ -1,43 +1,32 @@
 ﻿using Calculator.Models;
 using RestSharp;
+using System;
 using System.Net.Http;
 using System.Text.Json;
 
 namespace Calculator.Services
 {
+
     public class CalculatorService
     {
+        
         //public double Add(double num1, double num2)
         public async Task<double> Add(double num1, double num2)
         {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri("http://addoperatorservice/AddOperatorService/GetResult?a=" + num1 + "&b=" + num2);
+            RestClient restClient = new RestClient("http://addoperatorservice/AddOperatorService/");
+            var task = restClient.GetAsync<int>(new RestRequest("/GetResult?a=" + num1 + "&b=" + num2));
 
-            Console.WriteLine(client.BaseAddress);
-
-            var response = client.Send(new HttpRequestMessage(HttpMethod.Get, ""));
-            var stringTask = response.Content.ReadAsStringAsync();
-            stringTask.Wait();
-
-            Console.WriteLine(response.StatusCode + " from " + client.BaseAddress + " result: " + stringTask.Result);
-
-            return double.Parse(stringTask.Result);
+            Console.WriteLine("Retrived result from Add operation: " + task.Result);
+            return task.Result;
         }
 
         public async Task<double> Subtract(double num1, double num2)
         {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri("http://subtractoperatorservice/SubtractOperatorService/GetResult?a=" + num1 + "&b=" + num2);
+            RestClient restClient = new RestClient("http://subtractoperatorservice/SubtractOperatorService/");
+            var task = restClient.GetAsync<int>(new RestRequest("/GetResult?a=" + num1 + "&b=" + num2));
 
-            Console.WriteLine(client.BaseAddress);
-
-            var response = client.Send(new HttpRequestMessage(HttpMethod.Get, ""));
-            var stringTask = response.Content.ReadAsStringAsync();
-            stringTask.Wait();
-
-            Console.WriteLine(response.StatusCode + " from " + client.BaseAddress + " result: " + stringTask.Result);
-
-            return double.Parse(stringTask.Result);
+            Console.WriteLine("Retrived result from Subtract operation: " + task.Result);
+            return task.Result;
         }
 
         public async Task<List<MathematicalOpearation>> GetListOfItemsAsync()
