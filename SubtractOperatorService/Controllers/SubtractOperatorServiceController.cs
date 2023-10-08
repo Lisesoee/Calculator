@@ -29,6 +29,8 @@ namespace SubtractOperatorService.Controllers
             subtractOperationsdb.Execute("INSERT INTO subtractOperations (a, b, result) VALUES (@a, @b, @result)", new { a = a, b = b, result = result });
             Console.WriteLine("Result stored in database");
             subtractOperationsdb.Close();
+            
+            Thread.Sleep(3000);
 
             return result;
         }
@@ -69,6 +71,8 @@ namespace SubtractOperatorService.Controllers
 
             Console.WriteLine("Finished loading list.");
             subtractOperationsdb.Close();
+            
+            Thread.Sleep(2000);
 
             return operationList;
         }

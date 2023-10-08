@@ -28,7 +28,9 @@ namespace AddOperatorService.Controllers
 
             addOperationsdb.Execute("INSERT INTO addOperations (a, b, result) VALUES (@a, @b, @result)", new { a = a, b = b, result = result });
             Console.WriteLine("Result stored in database");
-            addOperationsdb.Close();           
+            addOperationsdb.Close(); 
+            
+            Thread.Sleep(2000);
 
             return result;
         }
@@ -68,6 +70,8 @@ namespace AddOperatorService.Controllers
 
             Console.WriteLine("Finished loading list.");
             addOperationsdb.Close();
+
+            Thread.Sleep(1000);
 
             return operationList;
         }
