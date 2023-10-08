@@ -7,11 +7,13 @@ namespace Calculator.Pages
 {
     public class IndexModel : PageModel
     {       
-        public double Result { get; set; }
+        public double AddResult { get; set; }
+        public double SubtractResult { get; set; }
         [BindProperty]
         public List<MathematicalOpearation> ListOfOperations { get; set; }
         public async Task<IActionResult> OnGet()
         {
+            // Runs when opening page
             var myCalculator = new CalculatorService();
             ListOfOperations = await myCalculator.GetListOfItemsAsync();
 
@@ -21,16 +23,17 @@ namespace Calculator.Pages
         public void OnPostAdd(double num1, double num2)
         {
             var myCalculator = new CalculatorService();
-            Result = myCalculator.Add(num1, num2);
+            AddResult = myCalculator.Add(num1, num2);
         }
         public void OnPostSubtract(double num1, double num2)
         {
             var myCalculator = new CalculatorService();
-            Result = myCalculator.Subtract(num1, num2);
+            SubtractResult = myCalculator.Subtract(num1, num2);
         }
 
         public async Task<IActionResult> OnPostListOfOperations()
         {
+            // Runs when button is pressed
             var myCalculator = new CalculatorService();
             ListOfOperations = await myCalculator.GetListOfItemsAsync();
 
