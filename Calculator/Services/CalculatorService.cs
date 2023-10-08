@@ -7,7 +7,8 @@ namespace Calculator.Services
 {
     public class CalculatorService
     {
-        public double Add(double num1, double num2)
+        //public double Add(double num1, double num2)
+        public async Task<double> Add(double num1, double num2)
         {
             var client = new HttpClient();
             client.BaseAddress = new Uri("http://addoperatorservice/AddOperatorService/GetResult?a=" + num1 + "&b=" + num2);
@@ -23,7 +24,7 @@ namespace Calculator.Services
             return double.Parse(stringTask.Result);
         }
 
-        public double Subtract(double num1, double num2)
+        public async Task<double> Subtract(double num1, double num2)
         {
             var client = new HttpClient();
             client.BaseAddress = new Uri("http://subtractoperatorservice/SubtractOperatorService/GetResult?a=" + num1 + "&b=" + num2);

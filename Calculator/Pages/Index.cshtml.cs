@@ -20,15 +20,19 @@ namespace Calculator.Pages
             return Page();
         }
 
-        public void OnPostAdd(double num1, double num2)
+        public async Task<IActionResult> OnPostAdd(double num1, double num2)
         {
             var myCalculator = new CalculatorService();
-            AddResult = myCalculator.Add(num1, num2);
+            AddResult = await myCalculator.Add(num1, num2);
+
+            return Page();
         }
-        public void OnPostSubtract(double num1, double num2)
+        public async Task<IActionResult> OnPostSubtract(double num1, double num2)
         {
             var myCalculator = new CalculatorService();
-            SubtractResult = myCalculator.Subtract(num1, num2);
+            SubtractResult = await myCalculator.Subtract(num1, num2);
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostListOfOperations()
