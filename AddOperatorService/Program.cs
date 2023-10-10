@@ -1,3 +1,7 @@
+using AddOperatorService;
+using OpenTelemetry.Trace;
+using Serilog;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -23,3 +27,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+Log.CloseAndFlush();
+MonitorService.TracerProvider.ForceFlush();
