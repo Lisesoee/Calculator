@@ -17,13 +17,15 @@
         <input type="text" id="num2" name="num2" placeholder="Enter number 2">
         <button type="submit">Add</button>
     </form>
+    <p>Result: <span>@Model.AddResult</span></p>
+    <br>
     <form method="post" asp-page-handler="Subtract">
         <input type="text" id="num1" name="num1" placeholder="Enter number 1">
         <input type="text" id="num2" name="num2" placeholder="Enter number 2">
         <button type="submit">Subtract</button>
     </form>
     <br>
-    <p>Result: <span>@Model.Result</span></p>
+    <p>Result: <span>@Model.SubtractResult</span></p>
 
     <br>
 

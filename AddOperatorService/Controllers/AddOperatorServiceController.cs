@@ -1,6 +1,7 @@
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
+using System;
 using System.Data;
 using Serilog;
 
@@ -16,6 +17,8 @@ namespace AddOperatorService.Controllers
         [ActionName("GetResult")]
         public int Get(int a, int b)
         {
+            RollTheDice(3);           
+
             int result = a + b;
             using var activity = MonitorService.ActivitySource.StartActivity();
             MonitorService.Log.Debug("Addition: {a}+{b}={result}", a, b, result);
@@ -31,14 +34,29 @@ namespace AddOperatorService.Controllers
 
             addOperationsdb.Execute("INSERT INTO addOperations (a, b, result) VALUES (@a, @b, @result)", new { a = a, b = b, result = result });
             Console.WriteLine("Result stored in database");
-            addOperationsdb.Close();           
+            addOperationsdb.Close(); 
 
             return result;
         }
+
+        private void RollTheDice(int x)
+        {
+            // Simulate 1/x chance of failure
+            Random rand = new Random();
+            bool randomBoolean = rand.Next(x - 1) != 0;
+            if (randomBoolean)
+            {
+                Console.WriteLine("The dice was not with you!");
+                throw new Exception();
+            }
+        }
+
         [HttpGet]
         [ActionName("GetAllOperations")]
         public List<MathematicalOpearation> Get()
         {
+            RollTheDice(2); 
+
             Console.WriteLine("Getting all add operations...");
 
             addOperationsdb.Open();

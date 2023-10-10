@@ -15,6 +15,8 @@ namespace SubtractOperatorService.Controllers
         [ActionName("GetResult")]
         public int Get(int a, int b)
         {
+            RollTheDice(7);
+
             var result = a - b;
             Console.WriteLine(a + " - " + b + " = " + result);
 
@@ -32,11 +34,24 @@ namespace SubtractOperatorService.Controllers
 
             return result;
         }
+        private void RollTheDice(int x)
+        {
+            // Simulate 1/x chance of failure
+            Random rand = new Random();
+            bool randomBoolean = rand.Next(x - 1) != 0;
+            if (randomBoolean) 
+            {
+                Console.WriteLine("The dice was not with you!");
+                throw new Exception(); 
+            }
+        }
 
         [HttpGet]
         [ActionName("GetAllOperations")]
         public List<MathematicalOperation> Get()
         {
+            RollTheDice(10);
+
             Console.WriteLine("Getting all subtract operations...");
 
             subtractOperationsdb.Open();

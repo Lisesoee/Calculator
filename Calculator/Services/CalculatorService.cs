@@ -1,127 +1,186 @@
 ﻿using Calculator.Models;
 using RestSharp;
+using System;
 using System.Net.Http;
 using System.Text.Json;
+using Polly;
+using System.Transactions;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Calculator.Services
 {
+
     public class CalculatorService
     {
-        public double Add(double num1, double num2)
+        private static RestClient addOperationRestClient = new RestClient("http://addoperatorservice/AddOperatorService/");
+        private static RestClient subtractOperationRestClient = new RestClient("http://subtractoperatorservice/SubtractOperatorService/");
+        public async Task<double> Add(double num1, double num2)
         {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri("http://addoperatorservice/AddOperatorService/GetResult?a=" + num1 + "&b=" + num2);
 
-            Console.WriteLine(client.BaseAddress);
+            var retryPolicy = Policy.Handle<Exception>()
+                .WaitAndRetryAsync(5, retryAttempt =>
+                {
+                    Console.WriteLine("Retry attempt... " + retryAttempt);
+                    var timeToRetry = TimeSpan.FromSeconds(1);
+                    Console.WriteLine($"Waiting {timeToRetry.TotalSeconds} seconds before next retry");
+                    return timeToRetry;
+                });
+            try
+            {
+                return await retryPolicy.ExecuteAsync(async () =>
+                {
+                    var task = addOperationRestClient.GetAsync<int>(new RestRequest("/GetResult?a=" + num1 + "&b=" + num2));
+                    await task;
 
-            var response = client.Send(new HttpRequestMessage(HttpMethod.Get, ""));
-            var stringTask = response.Content.ReadAsStringAsync();
-            stringTask.Wait();
+                    if (task?.Status == TaskStatus.RanToCompletion)
+                    {
+                        Console.WriteLine("Retrived result from Add operation: " + task.Result);
+                        return task.Result;
+                    }
+                    if (task?.Status == TaskStatus.Faulted)
+                    {
+                        throw new Exception("Request failed. Task status: " + task?.Status);
+                    }
+                    throw new Exception("Unexpected Task status: " + task?.Status);
 
-            Console.WriteLine(response.StatusCode + " from " + client.BaseAddress + " result: " + stringTask.Result);
-
-            return double.Parse(stringTask.Result);
+                });
+            }
+            catch (Exception ex)
+            {  
+                Console.WriteLine("Ran out of retries. Final exception: " + ex.ToString());
+                return 0;
+            }
         }
 
-        public double Subtract(double num1, double num2)
+        public async Task<double> Subtract(double num1, double num2)
         {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri("http://subtractoperatorservice/SubtractOperatorService/GetResult?a=" + num1 + "&b=" + num2);
+            var retryPolicy = Policy.Handle<Exception>()
+                .WaitAndRetryAsync(5, retryAttempt =>
+                {
+                    Console.WriteLine("Retry attempt... " + retryAttempt);
+                    var timeToRetry = TimeSpan.FromSeconds(1);
+                    Console.WriteLine($"Waiting {timeToRetry.TotalSeconds} seconds before next retry");
+                    return timeToRetry;
+                });
+            try
+            {
+                return await retryPolicy.ExecuteAsync(async () =>
+                {
+                    var task = subtractOperationRestClient.GetAsync<int>(new RestRequest("/GetResult?a=" + num1 + "&b=" + num2));
+                    await task;
 
-            Console.WriteLine(client.BaseAddress);
+                    if (task?.Status == TaskStatus.RanToCompletion)
+                    {
+                        Console.WriteLine("Retrived result from Subtract operation: " + task.Result);
+                        return task.Result;
+                    }
+                    if (task?.Status == TaskStatus.Faulted)
+                    {
+                        throw new Exception("Request failed. Task status: " + task?.Status);
+                    }
+                    throw new Exception("Unexpected Task status: " + task?.Status);
 
-            var response = client.Send(new HttpRequestMessage(HttpMethod.Get, ""));
-            var stringTask = response.Content.ReadAsStringAsync();
-            stringTask.Wait();
-
-            Console.WriteLine(response.StatusCode + " from " + client.BaseAddress + " result: " + stringTask.Result);
-
-            return double.Parse(stringTask.Result);
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ran out of retries. Final exception: " + ex.ToString());
+                return 0;
+            }
         }
 
         public async Task<List<MathematicalOpearation>> GetListOfItemsAsync()
         {
-            Console.WriteLine("Fetching list...");
+            Console.WriteLine("Fetching list of all operations...");
 
             var addOperationList = await GetListOfAddOperations();
             var subtractOperationList = await GetListOfSubtractOperations();
 
             var operationList = new List<MathematicalOpearation>();
             operationList.AddRange(addOperationList);
-            operationList.AddRange(subtractOperationList);  
+            operationList.AddRange(subtractOperationList);
 
             return operationList;
-
         }
+
         private async Task<List<MathematicalOpearation>> GetListOfAddOperations()
         {
-            Console.WriteLine("Fetching list...");
+            Console.WriteLine("Fetching list of add operations...");
 
-            // Create an HttpClient instance
-            using var client = new HttpClient();
-            client.BaseAddress = new Uri("http://addoperatorservice/AddOperatorService/GetAllOperations");
-
-            // Send an HTTP GET request
-            using var response = await client.GetAsync("");
-
-            // Check if the request was successful
-            if (response.IsSuccessStatusCode)
-            {
-                // Read the response content as a string
-                var responseContent = await response.Content.ReadAsStringAsync();
-
-                // Deserialize the JSON response into a list of MathematicalOperation objects
-                var operationsList = JsonSerializer.Deserialize<List<MathematicalOpearation>>(responseContent);
-                foreach (var operation in operationsList)
+            var retryPolicy = Policy.Handle<Exception>()
+                .WaitAndRetryAsync(2, retryAttempt =>
                 {
-                    operation.MathematicOperator = "+";
-                }
-
-                Console.WriteLine("Retrieved number of add operations: " + operationsList.Count);
-
-                return operationsList;
-            }
-            else
+                    Console.WriteLine("Retry attempt... " + retryAttempt);
+                    var timeToRetry = TimeSpan.FromSeconds(1);
+                    Console.WriteLine($"Waiting {timeToRetry.TotalSeconds} seconds before next retry");
+                    return timeToRetry;
+                });
+            try
             {
-                Console.WriteLine($"Error: {response.StatusCode}");
-                var operationList = new List<MathematicalOpearation>();
-                return operationList;
+                return await retryPolicy.ExecuteAsync(async () =>
+                {
+                    var task = addOperationRestClient.GetAsync<List<MathematicalOpearation>>(new RestRequest("/GetAllOperations"));
+                    await task;
+
+                    if (task?.Status == TaskStatus.RanToCompletion)
+                    {
+                        Console.WriteLine("Retrieved number of add operations: " + task.Result.Count);
+                        return task.Result;
+                    }
+                    if (task?.Status == TaskStatus.Faulted)
+                    {
+                        throw new Exception("Request failed. Task status: " + task?.Status);
+                    }
+                    throw new Exception("Unexpected Task status: " + task?.Status);
+
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ran out of retries. Final exception: " + ex.ToString());
+                var emptyOperationsList = new List<MathematicalOpearation>();
+                return emptyOperationsList;
             }
         }
 
         private async Task<List<MathematicalOpearation>> GetListOfSubtractOperations()
         {
-            Console.WriteLine("Fetching list...");
+            Console.WriteLine("Fetching list of subtract operations...");
 
-            // Create an HttpClient instance
-            using var client = new HttpClient();
-            client.BaseAddress = new Uri("http://subtractoperatorservice/SubtractOperatorService/GetAllOperations");
-
-            // Send an HTTP GET request
-            using var response = await client.GetAsync("");
-
-            // Check if the request was successful
-            if (response.IsSuccessStatusCode)
-            {
-                // Read the response content as a string
-                var responseContent = await response.Content.ReadAsStringAsync();
-
-                // Deserialize the JSON response into a list of MathematicalOperation objects
-                var operationsList = JsonSerializer.Deserialize<List<MathematicalOpearation>>(responseContent);
-                foreach (var operation in operationsList)
+            var retryPolicy = Policy.Handle<Exception>()
+                .WaitAndRetryAsync(2, retryAttempt =>
                 {
-                    operation.MathematicOperator = "-";
-                }
-
-                Console.WriteLine("Retrieved number of subtract operations: " + operationsList.Count);
-
-                return operationsList;
-            }
-            else
+                    Console.WriteLine("Retry attempt... " + retryAttempt);
+                    var timeToRetry = TimeSpan.FromSeconds(1);
+                    Console.WriteLine($"Waiting {timeToRetry.TotalSeconds} seconds before next retry");
+                    return timeToRetry;
+                });
+            try
             {
-                Console.WriteLine($"Error: {response.StatusCode}");
-                var operationList = new List<MathematicalOpearation>();
-                return operationList;
+                return await retryPolicy.ExecuteAsync(async () =>
+                {
+                    var task = subtractOperationRestClient.GetAsync<List<MathematicalOpearation>>(new RestRequest("/GetAllOperations"));
+                    await task;
+
+                    if (task?.Status == TaskStatus.RanToCompletion)
+                    {
+                        Console.WriteLine("Retrieved number of subtract operations: " + task.Result.Count);
+                        return task.Result;
+                    }
+                    if (task?.Status == TaskStatus.Faulted)
+                    {
+                        throw new Exception("Request failed. Task status: " + task?.Status);
+                    }
+                    throw new Exception("Unexpected Task status: " + task?.Status);
+
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ran out of retries. Final exception: " + ex.ToString());
+                var emptyOperationsList = new List<MathematicalOpearation>();
+                return emptyOperationsList;
             }
         }
     }
