@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -8,6 +9,20 @@ using Serilog;
 
 namespace Calculator.Services
 {
+    public static class LoggerExtensions 
+    {
+        public static Serilog.ILogger Here(this Serilog.ILogger logger,
+            [CallerMemberName] string membername = "",
+            [CallerFilePath] string sourceFilePath = "",
+            [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            return logger
+                .ForContext("MemberName", membername)
+                .ForContext("FilePath", sourceFilePath)
+                .ForContext("SourceLineNumber", sourceLineNumber);
+        }
+
+    }
     public static class MonitorService
     {
         public static readonly string ServiceName = Assembly.GetCallingAssembly().GetName().Name ?? "Unknown";
