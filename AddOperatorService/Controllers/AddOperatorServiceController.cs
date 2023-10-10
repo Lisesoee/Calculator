@@ -1,6 +1,7 @@
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
+using System;
 using System.Data;
 
 namespace AddOperatorService.Controllers
@@ -15,6 +16,8 @@ namespace AddOperatorService.Controllers
         [ActionName("GetResult")]
         public int Get(int a, int b)
         {
+            RollTheDice(3);           
+
             int result = a + b;
             Console.WriteLine(a + " + " + b + " = " + result);
 
@@ -30,14 +33,25 @@ namespace AddOperatorService.Controllers
             Console.WriteLine("Result stored in database");
             addOperationsdb.Close(); 
             
-            Thread.Sleep(2000);
+            //Thread.Sleep(2000);
 
             return result;
         }
+
+        private void RollTheDice(int x)
+        {
+            // Simulate 1/x chance of failure
+            Random rand = new Random();
+            bool randomBoolean = rand.Next(x-1) != 0;
+            if (randomBoolean) { throw new Exception(); }
+        }
+
         [HttpGet]
         [ActionName("GetAllOperations")]
         public List<MathematicalOpearation> Get()
         {
+            //RollTheDice(5); 
+
             Console.WriteLine("Getting all add operations...");
 
             addOperationsdb.Open();
@@ -71,7 +85,7 @@ namespace AddOperatorService.Controllers
             Console.WriteLine("Finished loading list.");
             addOperationsdb.Close();
 
-            Thread.Sleep(1000);
+            //Thread.Sleep(1000);
 
             return operationList;
         }
