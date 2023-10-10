@@ -15,6 +15,8 @@ namespace SubtractOperatorService.Controllers
         [ActionName("GetResult")]
         public int Get(int a, int b)
         {
+            RollTheDice(7);
+
             var result = a - b;
             Console.WriteLine(a + " - " + b + " = " + result);
 
@@ -29,10 +31,19 @@ namespace SubtractOperatorService.Controllers
             subtractOperationsdb.Execute("INSERT INTO subtractOperations (a, b, result) VALUES (@a, @b, @result)", new { a = a, b = b, result = result });
             Console.WriteLine("Result stored in database");
             subtractOperationsdb.Close();
-            
-            Thread.Sleep(3000);
 
             return result;
+        }
+        private void RollTheDice(int x)
+        {
+            // Simulate 1/x chance of failure
+            Random rand = new Random();
+            bool randomBoolean = rand.Next(x - 1) != 0;
+            if (randomBoolean) 
+            {
+                Console.WriteLine("The dice was not with you. Error when subtracting!");
+                throw new Exception(); 
+            }
         }
 
         [HttpGet]

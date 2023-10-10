@@ -42,8 +42,12 @@ namespace AddOperatorService.Controllers
         {
             // Simulate 1/x chance of failure
             Random rand = new Random();
-            bool randomBoolean = rand.Next(x-1) != 0;
-            if (randomBoolean) { throw new Exception(); }
+            bool randomBoolean = rand.Next(x - 1) != 0;
+            if (randomBoolean)
+            {
+                Console.WriteLine("The dice was not with you. Error when adding!");
+                throw new Exception();
+            }
         }
 
         [HttpGet]
