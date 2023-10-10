@@ -21,7 +21,10 @@ namespace AddOperatorService
             // OpenTelemetry
             TracerProvider = Sdk.CreateTracerProviderBuilder()
                 .AddConsoleExporter()
-                .AddZipkinExporter()
+                .AddZipkinExporter(config =>
+                {
+                    config.Endpoint = new Uri("http://localhost:9411/api/v2/spans");
+                })
                 .AddSource(ActivitySource.Name)
                 .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(ServiceName))
                 .Build();
@@ -30,7 +33,7 @@ namespace AddOperatorService
             Serilog.Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .WriteTo.Console()
-                .WriteTo.Seq("http://localhost:5341")
+                .WriteTo.Seq("http://seq:5341")
                 //.Enrich.WithSpan() // enrich logs with spans from traced activities
                 .CreateLogger();
         }

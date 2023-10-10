@@ -2,6 +2,7 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
 using System.Data;
+using Serilog;
 
 namespace AddOperatorService.Controllers
 {
@@ -15,10 +16,9 @@ namespace AddOperatorService.Controllers
         [ActionName("GetResult")]
         public int Get(int a, int b)
         {
-            using var activity = MonitorService.ActivitySource.StartActivity();
-            MonitorService.Log.Debug("Started Get for AddOperatorService a={a} b={b}", a, b);
-
             int result = a + b;
+            using var activity = MonitorService.ActivitySource.StartActivity();
+            MonitorService.Log.Debug("Addition: {a}+{b}={result}", a, b, result);
             Console.WriteLine(a + " + " + b + " = " + result);
 
             addOperationsdb.Open();
