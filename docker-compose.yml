@@ -8,6 +8,9 @@ services:
       dockerfile: AddOperatorService/Dockerfile
     depends_on:
       - addOperations-db
+      - zipkin 
+    # ports:
+    #   - 2222:80
     deploy:
       mode: replicated
       replicas: 3
@@ -22,6 +25,7 @@ services:
     depends_on:
       - addoperatorservice
       - subtractoperatorservice
+      - zipkin
 
   subtractoperatorservice:
     image: ${DOCKER_REGISTRY-}subtractoperatorservice
