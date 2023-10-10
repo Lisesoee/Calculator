@@ -17,6 +17,8 @@ namespace Calculator.Services
         private static RestClient subtractOperationRestClient = new RestClient("http://subtractoperatorservice/SubtractOperatorService/");
         public async Task<double> Add(double num1, double num2)
         {
+            using var activity = MonitorService.ActivitySource.StartActivity();
+            MonitorService.Log.Debug("Started method Add({num1},{num2})", num1, num2);
 
             var retryPolicy = Policy.Handle<Exception>()
                 .WaitAndRetryAsync(5, retryAttempt =>
@@ -24,30 +26,37 @@ namespace Calculator.Services
                     Console.WriteLine("Retry attempt... " + retryAttempt);
                     var timeToRetry = TimeSpan.FromSeconds(1);
                     Console.WriteLine($"Waiting {timeToRetry.TotalSeconds} seconds before next retry");
+                    MonitorService.Log.Warning("Retry attempt {retryAttempt} after {timeToRetry.TotalSeconds} seconds)", retryAttempt, timeToRetry.TotalSeconds);
                     return timeToRetry;
                 });
             try
             {
                 return await retryPolicy.ExecuteAsync(async () =>
                 {
-                    var task = addOperationRestClient.GetAsync<int>(new RestRequest("/GetResult?a=" + num1 + "&b=" + num2));
-                    await task;
-
-                    if (task?.Status == TaskStatus.RanToCompletion)
+                    using (var actCreateTable = MonitorService.ActivitySource.StartActivity("TryGetResult"))
                     {
-                        Console.WriteLine("Retrived result from Add operation: " + task.Result);
-                        return task.Result;
-                    }
-                    if (task?.Status == TaskStatus.Faulted)
-                    {
-                        throw new Exception("Request failed. Task status: " + task?.Status);
-                    }
-                    throw new Exception("Unexpected Task status: " + task?.Status);
+                        var task = addOperationRestClient.GetAsync<int>(new RestRequest("/GetResult?a=" + num1 + "&b=" + num2));
+                        await task;
 
+                        if (task?.Status == TaskStatus.RanToCompletion)
+                        {
+                            MonitorService.Log.Debug("Retrived result from Add operation: {task.Result}", task.Result);
+                            Console.WriteLine("Retrived result from Add operation: " + task.Result);
+                            return task.Result;
+                        }
+                        if (task?.Status == TaskStatus.Faulted)
+                        {
+                            MonitorService.Log.Error("Request failed. Task status: {task.Status}", task.Status);
+                            throw new Exception("Request failed. Task status: " + task?.Status);
+                        }
+                        MonitorService.Log.Error("Unexpected Task status: {task.Status}", task.Status);
+                        throw new Exception("Unexpected Task status: " + task?.Status);
+                    }
                 });
             }
             catch (Exception ex)
-            {  
+            {
+                MonitorService.Log.Error("Ran out of retries. Final exception: {ex.ToString}", ex.ToString);
                 Console.WriteLine("Ran out of retries. Final exception: " + ex.ToString());
                 return 0;
             }
@@ -55,43 +64,54 @@ namespace Calculator.Services
 
         public async Task<double> Subtract(double num1, double num2)
         {
+            using var activity = MonitorService.ActivitySource.StartActivity();
+
             var retryPolicy = Policy.Handle<Exception>()
                 .WaitAndRetryAsync(5, retryAttempt =>
                 {
                     Console.WriteLine("Retry attempt... " + retryAttempt);
                     var timeToRetry = TimeSpan.FromSeconds(1);
                     Console.WriteLine($"Waiting {timeToRetry.TotalSeconds} seconds before next retry");
+                    MonitorService.Log.Warning("Retry attempt {retryAttempt} after {timeToRetry.TotalSeconds} seconds)", retryAttempt, timeToRetry.TotalSeconds);
                     return timeToRetry;
                 });
             try
             {
                 return await retryPolicy.ExecuteAsync(async () =>
                 {
-                    var task = subtractOperationRestClient.GetAsync<int>(new RestRequest("/GetResult?a=" + num1 + "&b=" + num2));
-                    await task;
+                    using (var actCreateTable = MonitorService.ActivitySource.StartActivity("TryGetResult"))
+                    {
+                        var task = subtractOperationRestClient.GetAsync<int>(new RestRequest("/GetResult?a=" + num1 + "&b=" + num2));
+                        await task;
 
-                    if (task?.Status == TaskStatus.RanToCompletion)
-                    {
-                        Console.WriteLine("Retrived result from Subtract operation: " + task.Result);
-                        return task.Result;
+                        if (task?.Status == TaskStatus.RanToCompletion)
+                        {
+                            MonitorService.Log.Debug("Retrived result from Subtract operation: {task.Result}", task.Result);
+                            Console.WriteLine("Retrived result from Subtract operation: " + task.Result);
+                            return task.Result;
+                        }
+                        if (task?.Status == TaskStatus.Faulted)
+                        {
+                            MonitorService.Log.Error("Request failed. Task status: {task.Status}", task.Status);
+                            throw new Exception("Request failed. Task status: " + task?.Status);
+                        }
+                        MonitorService.Log.Error("Unexpected Task status: {task.Status}", task.Status);
+                        throw new Exception("Unexpected Task status: " + task?.Status);
                     }
-                    if (task?.Status == TaskStatus.Faulted)
-                    {
-                        throw new Exception("Request failed. Task status: " + task?.Status);
-                    }
-                    throw new Exception("Unexpected Task status: " + task?.Status);
 
                 });
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Ran out of retries. Final exception: " + ex.ToString());
+                MonitorService.Log.Error("Ran out of retries. Final exception: {ex.ToString}", ex.ToString);
                 return 0;
             }
         }
 
         public async Task<List<MathematicalOpearation>> GetListOfItemsAsync()
         {
+            using var activity = MonitorService.ActivitySource.StartActivity();
+            MonitorService.Log.Debug("Fetching list of all operations...");
             Console.WriteLine("Fetching list of all operations...");
 
             var addOperationList = await GetListOfAddOperations();
@@ -106,6 +126,7 @@ namespace Calculator.Services
 
         private async Task<List<MathematicalOpearation>> GetListOfAddOperations()
         {
+            using var activity = MonitorService.ActivitySource.StartActivity();
             Console.WriteLine("Fetching list of add operations...");
 
             var retryPolicy = Policy.Handle<Exception>()
@@ -114,31 +135,38 @@ namespace Calculator.Services
                     Console.WriteLine("Retry attempt... " + retryAttempt);
                     var timeToRetry = TimeSpan.FromSeconds(1);
                     Console.WriteLine($"Waiting {timeToRetry.TotalSeconds} seconds before next retry");
+                    MonitorService.Log.Warning("Retry attempt {retryAttempt} after {timeToRetry.TotalSeconds} seconds)", retryAttempt, timeToRetry.TotalSeconds);
                     return timeToRetry;
                 });
             try
             {
                 return await retryPolicy.ExecuteAsync(async () =>
                 {
-                    var task = addOperationRestClient.GetAsync<List<MathematicalOpearation>>(new RestRequest("/GetAllOperations"));
-                    await task;
+                    using (var actCreateTable = MonitorService.ActivitySource.StartActivity("TryGetAllOperations"))
+                    {
+                        var task = addOperationRestClient.GetAsync<List<MathematicalOpearation>>(new RestRequest("/GetAllOperations"));
+                        await task;
 
-                    if (task?.Status == TaskStatus.RanToCompletion)
-                    {
-                        Console.WriteLine("Retrieved number of add operations: " + task.Result.Count);
-                        return task.Result;
+                        if (task?.Status == TaskStatus.RanToCompletion)
+                        {
+                            MonitorService.Log.Debug("Retrieved number of add operations: {task.Result.Count}", task.Result.Count);
+                            Console.WriteLine("Retrieved number of add operations: " + task.Result.Count);
+                            return task.Result;
+                        }
+                        if (task?.Status == TaskStatus.Faulted)
+                        {
+                            MonitorService.Log.Error("Request failed. Task status: {task.Status}", task.Status);
+                            throw new Exception("Request failed. Task status: " + task?.Status);
+                        }
+                        MonitorService.Log.Error("Unexpected Task status: {task.Status}", task.Status);
+                        throw new Exception("Unexpected Task status: " + task?.Status);
                     }
-                    if (task?.Status == TaskStatus.Faulted)
-                    {
-                        throw new Exception("Request failed. Task status: " + task?.Status);
-                    }
-                    throw new Exception("Unexpected Task status: " + task?.Status);
 
                 });
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Ran out of retries. Final exception: " + ex.ToString());
+                MonitorService.Log.Error("Ran out of retries. Final exception: {ex.ToString}", ex.ToString);
                 var emptyOperationsList = new List<MathematicalOpearation>();
                 return emptyOperationsList;
             }
@@ -146,6 +174,7 @@ namespace Calculator.Services
 
         private async Task<List<MathematicalOpearation>> GetListOfSubtractOperations()
         {
+            using var activity = MonitorService.ActivitySource.StartActivity();
             Console.WriteLine("Fetching list of subtract operations...");
 
             var retryPolicy = Policy.Handle<Exception>()
@@ -154,31 +183,38 @@ namespace Calculator.Services
                     Console.WriteLine("Retry attempt... " + retryAttempt);
                     var timeToRetry = TimeSpan.FromSeconds(1);
                     Console.WriteLine($"Waiting {timeToRetry.TotalSeconds} seconds before next retry");
+                    MonitorService.Log.Warning("Retry attempt {retryAttempt} after {timeToRetry.TotalSeconds} seconds)", retryAttempt, timeToRetry.TotalSeconds);
                     return timeToRetry;
                 });
             try
             {
                 return await retryPolicy.ExecuteAsync(async () =>
                 {
-                    var task = subtractOperationRestClient.GetAsync<List<MathematicalOpearation>>(new RestRequest("/GetAllOperations"));
-                    await task;
+                    using (var actCreateTable = MonitorService.ActivitySource.StartActivity("TryGetAllOperations"))
+                    {
+                        var task = subtractOperationRestClient.GetAsync<List<MathematicalOpearation>>(new RestRequest("/GetAllOperations"));
+                        await task;
 
-                    if (task?.Status == TaskStatus.RanToCompletion)
-                    {
-                        Console.WriteLine("Retrieved number of subtract operations: " + task.Result.Count);
-                        return task.Result;
+                        if (task?.Status == TaskStatus.RanToCompletion)
+                        {
+                            MonitorService.Log.Debug("Retrieved number of subtract operations: {task.Result.Count}", task.Result.Count);
+                            Console.WriteLine("Retrieved number of subtract operations: " + task.Result.Count);
+                            return task.Result;
+                        }
+                        if (task?.Status == TaskStatus.Faulted)
+                        {
+                            MonitorService.Log.Error("Request failed. Task status: {task.Status}", task.Status);
+                            throw new Exception("Request failed. Task status: " + task?.Status);
+                        }
+                        MonitorService.Log.Error("Unexpected Task status: {task.Status}", task.Status);
+                        throw new Exception("Unexpected Task status: " + task?.Status);
                     }
-                    if (task?.Status == TaskStatus.Faulted)
-                    {
-                        throw new Exception("Request failed. Task status: " + task?.Status);
-                    }
-                    throw new Exception("Unexpected Task status: " + task?.Status);
 
                 });
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Ran out of retries. Final exception: " + ex.ToString());
+                MonitorService.Log.Error("Ran out of retries. Final exception: {ex.ToString}", ex.ToString);
                 var emptyOperationsList = new List<MathematicalOpearation>();
                 return emptyOperationsList;
             }
