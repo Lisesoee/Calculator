@@ -21,10 +21,8 @@ namespace AddOperatorService.Controllers
 
             RollTheDice(3);
             int result = a + b;
-            
-            MonitorService.Log.Debug("Addition: {a}+{b}={result}", a, b, result);
-
             Console.WriteLine(a + " + " + b + " = " + result);
+            MonitorService.Log.Here().Debug("Addition: {a}+{b}={result}", a, b, result);            
 
             addOperationsdb.Open();
             var tables = addOperationsdb.Query<string>("SHOW TABLES LIKE 'addOperations'");
@@ -33,7 +31,7 @@ namespace AddOperatorService.Controllers
                 using (var actCreateTable = MonitorService.ActivitySource.StartActivity("CreatingTable"))
                 {
                     addOperationsdb.Execute("CREATE TABLE addOperations (id INT AUTO_INCREMENT PRIMARY KEY, a INT NOT NULL, b INT NOT NULL, result INT NOT NULL, MathematicalOperator ENUM('+', '-') NOT NULL)");
-                    MonitorService.Log.Debug("AddOperations table created");
+                    MonitorService.Log.Here().Debug("AddOperations table created");
                     Console.WriteLine("Table created");
                 }
             }
@@ -41,7 +39,7 @@ namespace AddOperatorService.Controllers
             using (var actLoadingList = MonitorService.ActivitySource.StartActivity("StoreAddedResultInDatabase"))
             {
                 addOperationsdb.Execute("INSERT INTO addOperations (a, b, result) VALUES (@a, @b, @result)", new { a = a, b = b, result = result });
-                MonitorService.Log.Debug("AddOperation result stored in database");
+                MonitorService.Log.Here().Debug("AddOperation result stored in database");
                 Console.WriteLine("Result stored in database");
             }            
 
@@ -59,9 +57,8 @@ namespace AddOperatorService.Controllers
             bool randomBoolean = rand.Next(x - 1) != 0;
             if (randomBoolean)
             {
-                MonitorService.Log.Error("The dice was not with you!");
+                MonitorService.Log.Here().Error("The dice was not with you!");
                 Console.WriteLine("The dice was not with you!");
-
                 throw new Exception();
             }
         }
@@ -74,7 +71,7 @@ namespace AddOperatorService.Controllers
 
             RollTheDice(2);
 
-            MonitorService.Log.Debug("Getting all add operations...");
+            MonitorService.Log.Here().Debug("Getting all add operations...");
             Console.WriteLine("Getting all add operations...");
 
             addOperationsdb.Open();
@@ -85,7 +82,7 @@ namespace AddOperatorService.Controllers
                 using (var actCreateTable = MonitorService.ActivitySource.StartActivity("CreatingTable"))
                 {
                     addOperationsdb.Execute("CREATE TABLE addOperations (id INT AUTO_INCREMENT PRIMARY KEY, a INT NOT NULL, b INT NOT NULL, result INT NOT NULL, MathematicalOperator ENUM('+', '-') NOT NULL)");
-                    MonitorService.Log.Debug("AddOperations table created");
+                    MonitorService.Log.Here().Debug("AddOperations table created");
                     Console.WriteLine("Table created");
                 }                    
             }
@@ -108,11 +105,10 @@ namespace AddOperatorService.Controllers
                     MathematicalOpearation newOperation = new MathematicalOpearation(id, a, b, result, mathematicOperator);
                     operationList.Add(newOperation);
                 }
-
-                MonitorService.Log.Debug("Finished loading list.");
+            }
+                MonitorService.Log.Here().Debug("Finished loading list.");
                 Console.WriteLine("Finished loading list.");
                 addOperationsdb.Close();
-            }
 
             return operationList;
         }
