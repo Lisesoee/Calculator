@@ -32,8 +32,6 @@ namespace AddOperatorService.Controllers
             addOperationsdb.Execute("INSERT INTO addOperations (a, b, result) VALUES (@a, @b, @result)", new { a = a, b = b, result = result });
             Console.WriteLine("Result stored in database");
             addOperationsdb.Close(); 
-            
-            //Thread.Sleep(2000);
 
             return result;
         }
@@ -45,7 +43,7 @@ namespace AddOperatorService.Controllers
             bool randomBoolean = rand.Next(x - 1) != 0;
             if (randomBoolean)
             {
-                Console.WriteLine("The dice was not with you. Error when adding!");
+                Console.WriteLine("The dice was not with you!");
                 throw new Exception();
             }
         }
@@ -54,7 +52,7 @@ namespace AddOperatorService.Controllers
         [ActionName("GetAllOperations")]
         public List<MathematicalOpearation> Get()
         {
-            //RollTheDice(5); 
+            RollTheDice(2); 
 
             Console.WriteLine("Getting all add operations...");
 
@@ -88,8 +86,6 @@ namespace AddOperatorService.Controllers
 
             Console.WriteLine("Finished loading list.");
             addOperationsdb.Close();
-
-            //Thread.Sleep(1000);
 
             return operationList;
         }

@@ -92,7 +92,7 @@ namespace Calculator.Services
 
         public async Task<List<MathematicalOpearation>> GetListOfItemsAsync()
         {
-            Console.WriteLine("Fetching list...");
+            Console.WriteLine("Fetching list of all operations...");
 
             var addOperationList = await GetListOfAddOperations();
             var subtractOperationList = await GetListOfSubtractOperations();
@@ -108,20 +108,80 @@ namespace Calculator.Services
         {
             Console.WriteLine("Fetching list of add operations...");
 
-            var task = addOperationRestClient.GetAsync<List<MathematicalOpearation>>(new RestRequest("/GetAllOperations"));
+            var retryPolicy = Policy.Handle<Exception>()
+                .WaitAndRetryAsync(2, retryAttempt =>
+                {
+                    Console.WriteLine("Retry attempt... " + retryAttempt);
+                    var timeToRetry = TimeSpan.FromSeconds(1);
+                    Console.WriteLine($"Waiting {timeToRetry.TotalSeconds} seconds before next retry");
+                    return timeToRetry;
+                });
+            try
+            {
+                return await retryPolicy.ExecuteAsync(async () =>
+                {
+                    var task = addOperationRestClient.GetAsync<List<MathematicalOpearation>>(new RestRequest("/GetAllOperations"));
+                    await task;
 
-            Console.WriteLine("Retrieved number of add operations: " + task.Result.Count);
-            return task.Result;
+                    if (task?.Status == TaskStatus.RanToCompletion)
+                    {
+                        Console.WriteLine("Retrieved number of add operations: " + task.Result.Count);
+                        return task.Result;
+                    }
+                    if (task?.Status == TaskStatus.Faulted)
+                    {
+                        throw new Exception("Request failed. Task status: " + task?.Status);
+                    }
+                    throw new Exception("Unexpected Task status: " + task?.Status);
+
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ran out of retries. Final exception: " + ex.ToString());
+                var emptyOperationsList = new List<MathematicalOpearation>();
+                return emptyOperationsList;
+            }
         }
 
         private async Task<List<MathematicalOpearation>> GetListOfSubtractOperations()
         {
             Console.WriteLine("Fetching list of subtract operations...");
 
-            var task = subtractOperationRestClient.GetAsync<List<MathematicalOpearation>>(new RestRequest("/GetAllOperations"));
+            var retryPolicy = Policy.Handle<Exception>()
+                .WaitAndRetryAsync(2, retryAttempt =>
+                {
+                    Console.WriteLine("Retry attempt... " + retryAttempt);
+                    var timeToRetry = TimeSpan.FromSeconds(1);
+                    Console.WriteLine($"Waiting {timeToRetry.TotalSeconds} seconds before next retry");
+                    return timeToRetry;
+                });
+            try
+            {
+                return await retryPolicy.ExecuteAsync(async () =>
+                {
+                    var task = subtractOperationRestClient.GetAsync<List<MathematicalOpearation>>(new RestRequest("/GetAllOperations"));
+                    await task;
 
-            Console.WriteLine("Retrieved number of subtract operations: " + task.Result.Count);
-            return task.Result;
+                    if (task?.Status == TaskStatus.RanToCompletion)
+                    {
+                        Console.WriteLine("Retrieved number of subtract operations: " + task.Result.Count);
+                        return task.Result;
+                    }
+                    if (task?.Status == TaskStatus.Faulted)
+                    {
+                        throw new Exception("Request failed. Task status: " + task?.Status);
+                    }
+                    throw new Exception("Unexpected Task status: " + task?.Status);
+
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ran out of retries. Final exception: " + ex.ToString());
+                var emptyOperationsList = new List<MathematicalOpearation>();
+                return emptyOperationsList;
+            }
         }
     }
 }

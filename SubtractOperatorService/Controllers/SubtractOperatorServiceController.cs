@@ -41,7 +41,7 @@ namespace SubtractOperatorService.Controllers
             bool randomBoolean = rand.Next(x - 1) != 0;
             if (randomBoolean) 
             {
-                Console.WriteLine("The dice was not with you. Error when subtracting!");
+                Console.WriteLine("The dice was not with you!");
                 throw new Exception(); 
             }
         }
@@ -50,6 +50,8 @@ namespace SubtractOperatorService.Controllers
         [ActionName("GetAllOperations")]
         public List<MathematicalOperation> Get()
         {
+            RollTheDice(10);
+
             Console.WriteLine("Getting all subtract operations...");
 
             subtractOperationsdb.Open();
@@ -82,8 +84,6 @@ namespace SubtractOperatorService.Controllers
 
             Console.WriteLine("Finished loading list.");
             subtractOperationsdb.Close();
-            
-            Thread.Sleep(2000);
 
             return operationList;
         }
