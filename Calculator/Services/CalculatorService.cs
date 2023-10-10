@@ -26,7 +26,7 @@ namespace Calculator.Services
                     Console.WriteLine("Retry attempt... " + retryAttempt);
                     var timeToRetry = TimeSpan.FromSeconds(1);
                     Console.WriteLine($"Waiting {timeToRetry.TotalSeconds} seconds before next retry");
-                    MonitorService.Log.Warning("Retry attempt {retryAttempt} after {timeToRetry.TotalSeconds} seconds)", retryAttempt, timeToRetry.TotalSeconds);
+                    MonitorService.Log.Warning("Retry attempt {retryAttempt} after {timeToRetry} seconds)", retryAttempt, timeToRetry.TotalSeconds);
                     return timeToRetry;
                 });
             try
@@ -40,23 +40,23 @@ namespace Calculator.Services
 
                         if (task?.Status == TaskStatus.RanToCompletion)
                         {
-                            MonitorService.Log.Debug("Retrived result from Add operation: {task.Result}", task.Result);
+                            MonitorService.Log.Debug("Retrived result from Add operation: {result}", task.Result);
                             Console.WriteLine("Retrived result from Add operation: " + task.Result);
                             return task.Result;
                         }
                         if (task?.Status == TaskStatus.Faulted)
                         {
-                            MonitorService.Log.Error("Request failed. Task status: {task.Status}", task.Status);
+                            MonitorService.Log.Error("Request failed. Task status: {Status}", task.Status);
                             throw new Exception("Request failed. Task status: " + task?.Status);
                         }
-                        MonitorService.Log.Error("Unexpected Task status: {task.Status}", task.Status);
+                        MonitorService.Log.Error("Unexpected Task status: {Status}", task.Status);
                         throw new Exception("Unexpected Task status: " + task?.Status);
                     }
                 });
             }
             catch (Exception ex)
             {
-                MonitorService.Log.Error("Ran out of retries. Final exception: {ex.ToString}", ex.ToString);
+                MonitorService.Log.Error("Ran out of retries. Final exception: {exception}", ex.ToString);
                 Console.WriteLine("Ran out of retries. Final exception: " + ex.ToString());
                 return 0;
             }
@@ -72,7 +72,7 @@ namespace Calculator.Services
                     Console.WriteLine("Retry attempt... " + retryAttempt);
                     var timeToRetry = TimeSpan.FromSeconds(1);
                     Console.WriteLine($"Waiting {timeToRetry.TotalSeconds} seconds before next retry");
-                    MonitorService.Log.Warning("Retry attempt {retryAttempt} after {timeToRetry.TotalSeconds} seconds)", retryAttempt, timeToRetry.TotalSeconds);
+                    MonitorService.Log.Warning("Retry attempt {retryAttempt} after {timeToRetry} seconds)", retryAttempt, timeToRetry.TotalSeconds);
                     return timeToRetry;
                 });
             try
@@ -86,16 +86,16 @@ namespace Calculator.Services
 
                         if (task?.Status == TaskStatus.RanToCompletion)
                         {
-                            MonitorService.Log.Debug("Retrived result from Subtract operation: {task.Result}", task.Result);
+                            MonitorService.Log.Debug("Retrived result from Subtract operation: {Result}", task.Result);
                             Console.WriteLine("Retrived result from Subtract operation: " + task.Result);
                             return task.Result;
                         }
                         if (task?.Status == TaskStatus.Faulted)
                         {
-                            MonitorService.Log.Error("Request failed. Task status: {task.Status}", task.Status);
+                            MonitorService.Log.Error("Request failed. Task status: {Status}", task.Status);
                             throw new Exception("Request failed. Task status: " + task?.Status);
                         }
-                        MonitorService.Log.Error("Unexpected Task status: {task.Status}", task.Status);
+                        MonitorService.Log.Error("Unexpected Task status: {Status}", task.Status);
                         throw new Exception("Unexpected Task status: " + task?.Status);
                     }
 
@@ -103,7 +103,7 @@ namespace Calculator.Services
             }
             catch (Exception ex)
             {
-                MonitorService.Log.Error("Ran out of retries. Final exception: {ex.ToString}", ex.ToString);
+                MonitorService.Log.Error("Ran out of retries. Final exception: {exception}", ex.ToString);
                 return 0;
             }
         }
@@ -135,7 +135,7 @@ namespace Calculator.Services
                     Console.WriteLine("Retry attempt... " + retryAttempt);
                     var timeToRetry = TimeSpan.FromSeconds(1);
                     Console.WriteLine($"Waiting {timeToRetry.TotalSeconds} seconds before next retry");
-                    MonitorService.Log.Warning("Retry attempt {retryAttempt} after {timeToRetry.TotalSeconds} seconds)", retryAttempt, timeToRetry.TotalSeconds);
+                    MonitorService.Log.Warning("Retry attempt {retryAttempt} after {timeToRetry} seconds)", retryAttempt, timeToRetry.TotalSeconds);
                     return timeToRetry;
                 });
             try
@@ -149,13 +149,13 @@ namespace Calculator.Services
 
                         if (task?.Status == TaskStatus.RanToCompletion)
                         {
-                            MonitorService.Log.Debug("Retrieved number of add operations: {task.Result.Count}", task.Result.Count);
+                            MonitorService.Log.Debug("Retrieved number of add operations: {Count}", task.Result.Count);
                             Console.WriteLine("Retrieved number of add operations: " + task.Result.Count);
                             return task.Result;
                         }
                         if (task?.Status == TaskStatus.Faulted)
                         {
-                            MonitorService.Log.Error("Request failed. Task status: {task.Status}", task.Status);
+                            MonitorService.Log.Error("Request failed. Task status: {Status}", task.Status);
                             throw new Exception("Request failed. Task status: " + task?.Status);
                         }
                         MonitorService.Log.Error("Unexpected Task status: {task.Status}", task.Status);
@@ -166,7 +166,7 @@ namespace Calculator.Services
             }
             catch (Exception ex)
             {
-                MonitorService.Log.Error("Ran out of retries. Final exception: {ex.ToString}", ex.ToString);
+                MonitorService.Log.Error("Ran out of retries. Final exception: {exception}", ex.ToString);
                 var emptyOperationsList = new List<MathematicalOpearation>();
                 return emptyOperationsList;
             }
@@ -183,7 +183,7 @@ namespace Calculator.Services
                     Console.WriteLine("Retry attempt... " + retryAttempt);
                     var timeToRetry = TimeSpan.FromSeconds(1);
                     Console.WriteLine($"Waiting {timeToRetry.TotalSeconds} seconds before next retry");
-                    MonitorService.Log.Warning("Retry attempt {retryAttempt} after {timeToRetry.TotalSeconds} seconds)", retryAttempt, timeToRetry.TotalSeconds);
+                    MonitorService.Log.Warning("Retry attempt {retryAttempt} after {timeToRetry} seconds)", retryAttempt, timeToRetry.TotalSeconds);
                     return timeToRetry;
                 });
             try
@@ -197,16 +197,16 @@ namespace Calculator.Services
 
                         if (task?.Status == TaskStatus.RanToCompletion)
                         {
-                            MonitorService.Log.Debug("Retrieved number of subtract operations: {task.Result.Count}", task.Result.Count);
+                            MonitorService.Log.Debug("Retrieved number of subtract operations: {Count}", task.Result.Count);
                             Console.WriteLine("Retrieved number of subtract operations: " + task.Result.Count);
                             return task.Result;
                         }
                         if (task?.Status == TaskStatus.Faulted)
                         {
-                            MonitorService.Log.Error("Request failed. Task status: {task.Status}", task.Status);
+                            MonitorService.Log.Error("Request failed. Task status: {Status}", task.Status);
                             throw new Exception("Request failed. Task status: " + task?.Status);
                         }
-                        MonitorService.Log.Error("Unexpected Task status: {task.Status}", task.Status);
+                        MonitorService.Log.Error("Unexpected Task status: {Status}", task.Status);
                         throw new Exception("Unexpected Task status: " + task?.Status);
                     }
 
@@ -214,7 +214,7 @@ namespace Calculator.Services
             }
             catch (Exception ex)
             {
-                MonitorService.Log.Error("Ran out of retries. Final exception: {ex.ToString}", ex.ToString);
+                MonitorService.Log.Error("Ran out of retries. Final exception: {exception}", ex.ToString);
                 var emptyOperationsList = new List<MathematicalOpearation>();
                 return emptyOperationsList;
             }
