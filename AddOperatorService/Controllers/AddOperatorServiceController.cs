@@ -1,8 +1,12 @@
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
+using OpenTelemetry.Trace;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 //using Serilog;
 
 namespace AddOperatorService.Controllers
@@ -13,11 +17,20 @@ namespace AddOperatorService.Controllers
     {
         private static IDbConnection addOperationsdb = new MySqlConnection("Server=addOperations-db;Database=addOperations-database;Uid=guest;Pwd=1234;");
 
+        /*** START OF IMPORTANT CONFIGURATION ***/
+        private readonly Tracer _tracer;
+        public AddOperatorServiceController(Tracer tracer)
+        {
+            _tracer = tracer;
+        }
+        /*** END OF IMPORTANT CONFIGURATION ***/
+
         [HttpGet]
         [ActionName("GetResult")]
         public int Get(int a, int b)
         {
-            using var activity = MonitorService.ActivitySource.StartActivity();
+            using var activity = _tracer.StartActiveSpan("GET");
+            //using var activity = _tracer.StartActiveSpan("Get");
 
             RollTheDice(3);
             int result = a + b;
@@ -28,7 +41,7 @@ namespace AddOperatorService.Controllers
             var tables = addOperationsdb.Query<string>("SHOW TABLES LIKE 'addOperations'");
             if (!tables.Any())
             {
-                using (var actCreateTable = MonitorService.ActivitySource.StartActivity("CreatingTable"))
+                using (var actCreateTable = _tracer.StartActiveSpan("CreatingTable"))
                 {
                     addOperationsdb.Execute("CREATE TABLE addOperations (id INT AUTO_INCREMENT PRIMARY KEY, a INT NOT NULL, b INT NOT NULL, result INT NOT NULL, MathematicalOperator ENUM('+', '-') NOT NULL)");
                     MonitorService.Log.Here().Debug("AddOperations table created");
@@ -36,7 +49,7 @@ namespace AddOperatorService.Controllers
                 }
             }
 
-            using (var actLoadingList = MonitorService.ActivitySource.StartActivity("StoreAddedResultInDatabase"))
+            using (var actLoadingList = _tracer.StartActiveSpan("StoreAddedResultInDatabase"))
             {
                 addOperationsdb.Execute("INSERT INTO addOperations (a, b, result) VALUES (@a, @b, @result)", new { a = a, b = b, result = result });
                 MonitorService.Log.Here().Debug("AddOperation result stored in database");
@@ -50,7 +63,7 @@ namespace AddOperatorService.Controllers
 
         private void RollTheDice(int x)
         {
-            using var activity = MonitorService.ActivitySource.StartActivity();
+            using var activity = _tracer.StartActiveSpan("RollTheDice");
 
             // Simulate 1/x chance of failure
             Random rand = new Random();
@@ -67,7 +80,7 @@ namespace AddOperatorService.Controllers
         [ActionName("GetAllOperations")]
         public List<MathematicalOpearation> Get()
         {
-            using var activity = MonitorService.ActivitySource.StartActivity();
+            using var activity = _tracer.StartActiveSpan("GetAllOperations");
 
             RollTheDice(2);
 
@@ -79,7 +92,7 @@ namespace AddOperatorService.Controllers
             var tables = addOperationsdb.Query<string>("SHOW TABLES LIKE 'addOperations'");
             if (!tables.Any())
             {
-                using (var actCreateTable = MonitorService.ActivitySource.StartActivity("CreatingTable"))
+                using (var actCreateTable = _tracer.StartActiveSpan("CreatingTable"))
                 {
                     addOperationsdb.Execute("CREATE TABLE addOperations (id INT AUTO_INCREMENT PRIMARY KEY, a INT NOT NULL, b INT NOT NULL, result INT NOT NULL, MathematicalOperator ENUM('+', '-') NOT NULL)");
                     MonitorService.Log.Here().Debug("AddOperations table created");
@@ -89,7 +102,7 @@ namespace AddOperatorService.Controllers
 
             List<MathematicalOpearation> operationList = new List<MathematicalOpearation>();
 
-            using (var actLoadingList = MonitorService.ActivitySource.StartActivity("LoadingList"))
+            using (var actLoadingList = _tracer.StartActiveSpan("LoadingList"))
             {
                 MySqlCommand cmd = addOperationsdb.CreateCommand() as MySqlCommand;
                 cmd.CommandText = "SELECT * FROM addOperations";
