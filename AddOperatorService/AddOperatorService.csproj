@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>9e5fe449-5687-46f8-85cd-d630a5e5914b</UserSecretsId>
@@ -11,12 +11,16 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.4" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.4" />
     <PackageReference Include="MySqlConnector" Version="2.2.7" />
     <PackageReference Include="OpenTelemetry" Version="1.6.0" />
     <PackageReference Include="OpenTelemetry.Api" Version="1.6.0" />
+    <PackageReference Include="OpenTelemetry.AutoInstrumentation.AspNetCoreBootstrapper" Version="1.0.2" />
     <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.6.0" />
     <PackageReference Include="OpenTelemetry.Exporter.Zipkin" Version="1.6.0" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.6.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.5.1" />
     <PackageReference Include="Serilog" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.3" />
